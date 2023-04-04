@@ -1,0 +1,137 @@
+Κομματια Ασκησης:
+1. Τι ειναι τα Signals
+    Τροπος Επικοινωνιας Διεργασιων / Ειδοποιηση που ενημερωνει μια διεργασια για ενα γεγονος
+    Οταν λαμβανεται ενα σημα, η διεργασια σταματα την εκετελεση της και χειριζεται το σημα αμεσα 
+    Επειτα η διεργασια συνεχιζει απο εκει που βρισκοταν
+    Κάθε σήμα έχει έναν ακέραιο αριθμό που το αντιπροσωπεύει (1,2, …), καθώς επίσης και ένα συμβολικό όνομα (χρειαζομαστε την signal.h)
+
+2. Χειριστης Σηματος
+    Συναρτηση που καλειται οταν μια διεργασια λαβει ενα συγκεκριμενο σημα
+    Αυτη καλειται ασυγχρονα, δηλαδη εγω οριζω ποια θα καλεστει με βαση καποιο σημα
+	
+	τι ειναι και τι κανει ο handler
+	ειναι ενα fucntion που λαβανει εναν Int απο την singal ή την sigaction και δεν επιστρεφει τιποτα.
+	οταν η διεργασια λαβει ενα συγκεκριμενο σημα το συστημα σταματαει την ομαλη ροη εκτελεσης και καλει τον καταληλο
+		handler function. τοτε κανει καθε απαραιτητο βημα πχ θετει καποιο flag ή κανει terminate
+	
+	Είναι μια συνάρτηση που εκτελείται όταν η διεργασία λαμβάνει το συγκεκριμένο σήμα. Η συνάρτηση αυτή καλείται ασύγχρονα.
+	Οταν ερθει ενα σημα, το ΛΣ σταματά την εκτέλεση της διεργασίας, και "την αναγκάζει" να καλέσει την αντίστοιχη συνάρτηση χειρισμού αυτού του σήματος
+
+    
+3. Το alarm των παιδιων 
+    Καθε 15 δευτερολεπτα τα παιδια τυπωνουν την κατασταση τους. Αυτο γινεται με την χρηση ενος σηματος SIGALRM το οποιο στελενται με την 
+        συναρτηση alarm(15). Αυτη η συναρτηση σημαινει οτι σε 15 δευτερολεπτα θα γινει raise(SIGALRM), δηλαδη θα σταλθει ενα τετοιο σημα, στην διεργασια που το καλεσε
+    RETURN VALUE
+       alarm() returns the number of seconds remaining until any previously  scheduled alarm  was  due  to  be delivered, or zero if there was no previously
+        scheduled alarm.
+        
+4. Υπολογισμος Χρονου
+    Χρηση της συναρτησης time(NULL) 
+        the call to time(NULL) returns the current calendar time (seconds since Jan 1, 1970)
+    Υπολογισζουμε μια χρονικη στιγμη στην αρχη, επειτα ελεγχουμε τον χρονο με βαση εκεινη την χρονικη στιγμη καθε φορα που θελουμε να τυπωσουμε ενα μνμα
+    
+5. Πως λαμβανουν σηαμτα οι διεργασιες παιδια 
+    Γινεται ειτε απο τον πατερα ειτε απο το terminal 
+    Πατερας: kill(pid,<signal>)
+    Terminal: kill -<signal> pid
+    Οταν το παιδι λαβει ενα signal σταματαει την εκτελεση του για να χειριστει το signal με τον καταλληλο handler
+    
+6. Τι πρεπει να κανει ενας πατερας 
+    Πρεπει να ελεγχει οτι τα παιδια ειναι υγιη
+    Αυτο σημαινει οτι πρεπει να δεχεται σηματα SIGCHLD τα οποια σημαινουν ειτε οτι ενα παιδι πεθανε ειτε οτι σταματησε
+
+	Πρεπει να δημιουργει το παιδι με την fork(), να κανει set up τα signal handlers, να στελνει signals στο παιδι
+	με την εντολη kill(), να περιμενει ενα παιδι να terminate με την waitpid(), να κανει handle το θανατο του παιδιου
+	και να εκτυπωνει τα exit status, να ελεγχει οτι ολα τα παιδια ειναι υγιη, αν εχει σταματησει καποιο να το κανει resume       
+ 
+7. Τι κανει η signal 
+	αλλαζει τη συμπεριφορα μιας διεργασιας οταν λαβει ενα συγκεκριμενο signal
+	2 arguments: 1o. το signal 2ο. pointer στο handler function που θα εκτελεσει οταν λαβει το signal
+	χειροτερη απο την sigaction
+	το signal handler μπορει να ειναι ενα απο τα 3. 1ο.SIG_DFL που ειναι το default action οταν λαβει σημα
+		2ο. SIG_IGN το σημα αγνοειται οταν το λαβει 3ο. ενα user defined handler 
+        signal()  returns  the previous value of the signal handler, or SIG_ERR on error.
+		
+
+8. sigaction (GIORGOS)
+	Ειναι μια συναρτηση με 3 ορισματα	
+		α. Το signal type
+		β. Το δευτερο argument δειχνει στην δομη sigaction
+			H Δομη sigaction περιεχει την συναρτηση handler, τα mask που ειανι ενα σετ απο σηματα τα οποια μπλοκαρουμε οταν τρεχει ο handler και τελος καποια
+			 flags που θετουμε
+		γ.  3ο το oldact που μπορουμε εκει να αποθηκευσουμε τον παλιο handler του σηματος μας αν υπαρχει αλλιως null.
+	Επιστρεφει 0 στην επιτυχια και -1 στην αποτυχια
+	Χρησιμοποιειται για handle σηματων που ερχονται απο το συστημα(real time signals) αλλα και απο αλλες διεργασιες
+
+	Συγκεκριμενα για το struct:
+		α. Το mask ειναι ενα σετ μορφης sigset_s που ουασιαστικα ειναι ενας πινακας απο bit που κρυβονται πισω απο μια μακρο
+			Καθε bit αντιπροσωπεύει ενα signal type
+			sigemptyset(%s) -> clear all bits 
+			sigaddset(%s,signal) -> αυτο θετει το bit που αντισοιχει στο signal που θελουμε 
+				παραδειγμα μπορουμε να βαλλουμε το SIGQUIT ετσι ωστε να μπλοκαρουμε το σημα SIGQUIT
+			sigismember()
+				Tα blovked signals περιμενουν μεχρι να γινουν unblocked / ωστοσο δεν υπαρχει στοιβα / κραταμε μονο 1
+				Χρησιμοποοιουμε την sigprocmask ετσι ωστε να φτιαξουμε κομματια κωδικα τα οποια δεν επηρεαζονται απο συγκεκριμενα σηαμτα
+		b.sa_flags specifies a set of flags which modify the behavior of the signal.
+			Τα flags μπορουν να γινουν set. Υπαρχουν συγκεκριμενα flags οπως το SA_RESTART 
+			Ουσιαστικα κανουν modify την συμπεριφορα ενος σηαμτος
+						         SA_RESTART ->> Enables automatic restarting of interrupted system calls!
+              Provide behavior compatible with BSD signal semantics by
+              making certain system calls restartable across signals.
+              This flag is meaningful only when establishing a signal
+              handler.  See signal(7) for a discussion of system call
+              restarting.
+	
+9. Tι κανει η waitpid()
+     Τα 3 arguments της: 1o. pid του child process για το οποιο θα περιμενει. Αν ειναι -1 η waitpid() θα περιμενει
+		για οποιοδηποτε παιδι να terminate 2ο. status που ειναι ενας δεικτης σε ενα int που θα γινει store του
+		exit status 3ο. options ειναι ενα set απο flags για τον τροπο που θα φερεται η waitpid(). Το πιο συνηθ 
+		ειναι το WNOHANG που λεει οτι η waitpid() πρεπει να επιστρεψει κατευθειαν αν δεν υπαρχει καποιο παιδι 
+		που πρεπει να περιμενει , και η WUNTRACED που λεει οτι η waitpid() πρεπει να επιστρεψει οταν ενα child 
+		process εχει σταματησει.
+     Πως χρησιμοποιειται: ειναι ενα function που μπορει να περιμενει ενα συγκεκριμενο child process να αλλαξει state
+				  και ειναι καλυτερη απο την wait().
+     Τι επιστρεφει: το PID του παιδιου που αλλαξε state ή -1 αν υπηρχε error ή 0 αν χρησιμοποιηθηκε η WNOHANG και 
+			  δεν υπηρχαν παιδια σε waitable state
+	
+	Τα ακολουθα macros προερχονται απο το wait.h header και χρησιμοποιουνται μαζι με την waitpid εχοντας παρει πληροφοιρες για το status του παιδιου 
+	WIFEXITED
+		This macro returns a nonzero value if the child process terminated normally with exit or _exit.
+	WEXITSTATUS 
+		If WIFEXITED is true of status, this macro returns the low-order 8 bits of the exit status value from the child process
+	WIFSTOPPED
+		This macro returns a nonzero value if the child process is stopped.
+			  
+10. Το αρχειο makefile τι κανει
+		ειναι ενα script που αυτοματοποιει το building και compiling ενος προγραμματος. Περιεχει κανονες για το πως 
+		πρεπει να χτιστει το προγραμμα, σε ποια αρχεια να βασιστει και ποια command να τρεξει
+		Οταν τρεχουμε το "make" το συστημα διαβαζει την makefile και εκτελει. Τα κανει ολα πχ compile, linking, creating exe
+
+11. διαφορες sigaction και signal
+	η sigaction επιτρεπει καλυτερο ελεγχο των σηματων απο την signal
+	η signal ειναι περιορισμενη στον αριθμο τυπων signals που μπορει να επεξεργαστει και μερικες φορες χανει σηματα
+		αν ερθουν πολυ γρηγορα
+	με την sigaction μπορεις να κανεις block και unblock signals οσο εκτελειται ο signal handler
+	
+12. τι κανει η execv
+	ειναι ενα system call που χρησιμοποιειται για να εκτελεσει ενα προγραμμα. Κανει αντικατασταση του τωρινου process
+	με νεο απο συγκεκριμενο αρχειο. 
+	ειναι μελος της οικογενειας exec που εχει και αλλες οπως execl execvp execve
+	The exec() family of functions replaces the current process image with a new process image
+	2 arguments: 1o. το path στο αρχειο 2ο. ενα array απο chars που αντιπροσωπευουν τα ορισματα που πρεπει να περασουν
+		στο εκτελεσιμο
+	Δεν επιστρεφει εκτος μονο αν υπαρξει error που τοτε επιστρεφει -1
+	Οταν κληθει φορτωνει το specific προγραμμα στην τωρινη διεργασια και αρχιζει την εκτελεση του, αντικαθηστοντας
+		το παλιο προγραμμα με το καινουρηγιο. Ο κωδικας η δεδομενα στην μνημη απο το παλιο προγραμμα αντικαταστειται
+		
+	To παιδι κληρονομει τους handlers του πατερα και ανοικτα αρχεια που ισως εχει
+
+notes:
+1. char * const argv[] -> An array of "const pointer" to char // You won't be able to change "argv" within the function
+2. macro εντολες ειναι γκρουπ εντολων συνδυασμενες σε 1
+3. Ρωταει και κατι παραπανω για καθε τι 
+	πχ στην signal ρωταει εξτρα αν δεν ειχαμε καποιο ορισει κατι για καποιο signal τι θα γινοταν
+	στην execv τι αλλο κληρονομει το παιδι
+
+* Ενα παιδι στελνει SIGCHLD και οταν εχει κανει exit και οταν εχει σταματησει
+* atoi μετατροπη του string σε int.
