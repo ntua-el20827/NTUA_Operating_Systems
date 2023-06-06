@@ -1,4 +1,4 @@
-# Operating_Systems_Lab 2023
+# Operating_Systems_Lab_2023
 
 - Γεωργακόπουλος Γεωργιος 
 - Χριστοδουλάκης Σταύρος 
