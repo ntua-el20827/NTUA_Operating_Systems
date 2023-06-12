@@ -8,7 +8,7 @@
 Σχολια:
 Τα προγράμματα τρέχουν μόνο σε λειτουργικό σύστημα linux 
 
-Download gcc compiler in ubuntu / mint:
-sudo apt update
-sudo apt install build-essential
+Download gcc compiler in ubuntu / mint:\n
+sudo apt update \n
+sudo apt install build-essential \n
 sudo apt-get install manpages-dev
