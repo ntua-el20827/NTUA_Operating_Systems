@@ -1,6 +1,7 @@
-# Operating_Systems_Lab_2023
-- ΕΜΠ - ΣΗΜΜΥ
-- Eργαστηριακό μέρος του μαθήματος Λειτουργικά Συστήματα (Ροη Υ / 6o Εξάμηνο) - Τμήμα Τσανάκα
-- Περιέχονται οι εκφωνήσεις και οι λύσεις
-- Γεωργακόπουλος Γεωργιος 
-- Χριστοδουλάκης Σταύρος 
+#Operating_Systems_Lab_2023
+- NTUA - ECE
+- Laboratory part of the Operating Systems course (Flow Y / 6th Semester)
+- Instructor: Tsanakas
+- It contains the exercises and solutions
+- Georgakopoulos Georgios
+- Christodoulakis Stavros
