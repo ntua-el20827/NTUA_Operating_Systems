@@ -2,6 +2,6 @@
 - NTUA - ECE
 - Laboratory part of the Operating Systems course (Flow Y / 6th Semester)
 - Instructor: Tsanakas
-- It contains the exercises and solutions
+- Contains exercises and solutions
 - Georgakopoulos Georgios
 - Christodoulakis Stavros
